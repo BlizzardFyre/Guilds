@@ -1,0 +1,8 @@
+main: com.blizzardfyre.guilds.GuildMain
+name: Guilds
+version: 0.1
+commands:
+  guild:
+    usage: /<command>
+    description: The base command for guilds.
+    aliases: [g]
