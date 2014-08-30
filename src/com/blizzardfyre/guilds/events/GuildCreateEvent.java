@@ -4,8 +4,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import com.blizzardfyre.guilds.GuildMain;
-import com.blizzardfyre.guilds.objects.User;
 import com.blizzardfyre.guilds.objects.Guild;
+import com.blizzardfyre.guilds.objects.User;
 
 public class GuildCreateEvent extends Event {
 

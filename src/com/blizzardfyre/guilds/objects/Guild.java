@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -20,16 +21,22 @@ public class Guild {
 	private YamlConfiguration yml;
 	private String name;
 	private UUID leader;
+	private String prefix;
 	private double balance;
 	private HashMap<String, ArrayList<UUID>> rankMembers = new HashMap<String, ArrayList<UUID>>();
 	private HashMap<String, ArrayList<String>> rankPerms = new HashMap<String, ArrayList<String>>();
 	private ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 
+	/**
+	 * @param name
+	 *            The name of the guild that you want to load from the file.
+	 */
 	public Guild(String name) {
 		file = new File(GuildMain.getInstance().getDataFolder() + File.separator + "guilds", name + ".yml");
 		yml = YamlConfiguration.loadConfiguration(file);
 		this.name = name;
 		leader = UUID.fromString(yml.getString("leader"));
+		prefix = ChatColor.translateAlternateColorCodes('&', yml.getString("prefix")) + " ";
 		balance = yml.getDouble("balance");
 		if (yml.getConfigurationSection("ranks") != null) {
 			for (String string : yml.getConfigurationSection("ranks").getKeys(false)) {
@@ -51,10 +58,25 @@ public class Guild {
 			}
 	}
 
+	/**
+	 * <p>
+	 * Gets the name of the guild defined at the creation of the guild. This
+	 * string is liable to change, so storing it by the name is not recommended
+	 * as it can lead to issues later on.
+	 * 
+	 * @return Returns the name of the guild.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * <p>
+	 * This changes the name of the guild in both the file, and in the main class.
+	 * Try to avoid doing this from outside of the Guilds plugin, as it can cause
+	 * issues if not done in the proper manner.
+	 * @param name The new desired name
+	 */
 	public void setName(String name) {
 		File newFile = new File(file.getAbsolutePath().replace(this.name, name));
 		file.delete();
@@ -116,6 +138,16 @@ public class Guild {
 	public void claimChunk(Chunk chunk) {
 		chunks.add(chunk);
 		yml.set("claims", LocationUtils.convertChunks(chunks));
+		saveYml();
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String newPrefix) {
+		prefix = ChatColor.translateAlternateColorCodes('&', newPrefix) + " ";
+		yml.set("prefix", newPrefix);
 		saveYml();
 	}
 

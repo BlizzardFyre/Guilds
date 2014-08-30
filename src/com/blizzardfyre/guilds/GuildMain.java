@@ -3,8 +3,11 @@ package com.blizzardfyre.guilds;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.blizzardfyre.guilds.commands.CommandHandler;
@@ -17,6 +20,7 @@ public class GuildMain extends JavaPlugin {
 
 	private ArrayList<Guild> guilds = null;
 	private ArrayList<User> users = new ArrayList<User>();
+	private Economy econ = null;
 
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
@@ -24,6 +28,7 @@ public class GuildMain extends JavaPlugin {
 		FileUtils.getGuildFolder();
 		FileUtils.getPlayersFolder();
 		loadGuilds();
+		setupEconomy();
 		getCommand("guild").setExecutor(new CommandHandler());
 		Bukkit.getPluginManager().registerEvents(new ConnectionListener(), this);
 		for (Player p : Bukkit.getOnlinePlayers()) {
@@ -88,6 +93,22 @@ public class GuildMain extends JavaPlugin {
 
 	public void loadGuilds() {
 		guilds = Guild.loadGuilds();
+	}
+	
+	public Economy getEcon() {
+		return econ;
+	}
+
+	private boolean setupEconomy() {
+		if (getServer().getPluginManager().getPlugin("Vault") == null) {
+			return false;
+		}
+		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		if (rsp == null) {
+			return false;
+		}
+		econ = rsp.getProvider();
+		return econ != null;
 	}
 
 }

@@ -35,6 +35,10 @@ public class User {
 		return uuid;
 	}
 
+	public Player getPlayer() {
+		return Bukkit.getPlayer(uuid);
+	}
+
 	public void addKill() {
 		kills += 1;
 		yml.set("kills", kills);

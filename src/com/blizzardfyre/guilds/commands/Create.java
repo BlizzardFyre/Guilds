@@ -1,10 +1,12 @@
 package com.blizzardfyre.guilds.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.blizzardfyre.guilds.GuildMain;
+import com.blizzardfyre.guilds.events.GuildCreateEvent;
 import com.blizzardfyre.guilds.objects.Guild;
 import com.blizzardfyre.guilds.objects.User;
 import com.blizzardfyre.guilds.utils.MessageUtils;
@@ -47,10 +49,12 @@ public class Create {
 		}
 
 		User user = GuildMain.getInstance().getUser(sender.getName());
-		
+
 		Guild.createGuild(name, user);
 		user.addGuild(name);
-		
+		GuildCreateEvent e = new GuildCreateEvent(GuildMain.getInstance().getGuild(name));
+		Bukkit.getPluginManager().callEvent(e);
+
 		sender.sendMessage(MessageUtils.getPrefix() + ChatColor.GOLD + "You have successfully made the guild " + ChatColor.BLUE + name + ChatColor.GOLD + ".");
 
 	}
