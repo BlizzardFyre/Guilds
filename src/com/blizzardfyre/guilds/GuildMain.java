@@ -20,6 +20,7 @@ public class GuildMain extends JavaPlugin {
 
 	private ArrayList<Guild> guilds = null;
 	private ArrayList<User> users = new ArrayList<User>();
+	private ArrayList<UUID> deletes = new ArrayList<UUID>();
 	private Economy econ = null;
 
 	@SuppressWarnings("deprecation")
@@ -91,10 +92,27 @@ public class GuildMain extends JavaPlugin {
 		users.remove(player);
 	}
 
+	public void addDeleter(User user) {
+		deletes.add(user.getUniqueId());
+	}
+
+	public void removeDeleter(UUID uuid) {
+		deletes.remove(uuid);
+	}
+
+	public boolean hasDeleter(UUID uuid) {
+		for (UUID id : deletes) {
+			if (id.toString().equals(uuid.toString())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void loadGuilds() {
 		guilds = Guild.loadGuilds();
 	}
-	
+
 	public Economy getEcon() {
 		return econ;
 	}

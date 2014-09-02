@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.blizzardfyre.guilds.GuildMain;
 import com.blizzardfyre.guilds.utils.FileUtils;
 import com.blizzardfyre.guilds.utils.LocationUtils;
+import com.blizzardfyre.guilds.utils.MessageUtils;
 
 public class Guild {
 
@@ -27,10 +29,6 @@ public class Guild {
 	private HashMap<String, ArrayList<String>> rankPerms = new HashMap<String, ArrayList<String>>();
 	private ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 
-	/**
-	 * @param name
-	 *            The name of the guild that you want to load from the file.
-	 */
 	public Guild(String name) {
 		file = new File(GuildMain.getInstance().getDataFolder() + File.separator + "guilds", name + ".yml");
 		yml = YamlConfiguration.loadConfiguration(file);
@@ -58,25 +56,10 @@ public class Guild {
 			}
 	}
 
-	/**
-	 * <p>
-	 * Gets the name of the guild defined at the creation of the guild. This
-	 * string is liable to change, so storing it by the name is not recommended
-	 * as it can lead to issues later on.
-	 * 
-	 * @return Returns the name of the guild.
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * <p>
-	 * This changes the name of the guild in both the file, and in the main class.
-	 * Try to avoid doing this from outside of the Guilds plugin, as it can cause
-	 * issues if not done in the proper manner.
-	 * @param name The new desired name
-	 */
 	public void setName(String name) {
 		File newFile = new File(file.getAbsolutePath().replace(this.name, name));
 		file.delete();
@@ -135,6 +118,17 @@ public class Guild {
 		return rankMembers.get(rank);
 	}
 
+	public ArrayList<UUID> getMembers() {
+		ArrayList<UUID> members = new ArrayList<UUID>();
+		for (ArrayList<UUID> list : rankMembers.values()) {
+			for (UUID uuid : list) {
+				members.add(uuid);
+			}
+		}
+		members.add(leader);
+		return members;
+	}
+
 	public void claimChunk(Chunk chunk) {
 		chunks.add(chunk);
 		yml.set("claims", LocationUtils.convertChunks(chunks));
@@ -167,6 +161,10 @@ public class Guild {
 		saveYml();
 	}
 
+	public File getFile() {
+		return file;
+	}
+
 	private void saveYml() {
 		try {
 			yml.save(file);
@@ -195,6 +193,16 @@ public class Guild {
 			ex.printStackTrace();
 		}
 		GuildMain.getInstance().loadGuilds();
+	}
+
+	public static void deleteGuild(String name) {
+		Guild guild = GuildMain.getInstance().getGuild(name);
+		GuildMain.getInstance().removeGuild(guild);
+		guild.getFile().delete();
+		for (UUID uuid : guild.getMembers()) {
+			Bukkit.getPlayer(uuid).sendMessage(MessageUtils.getPrefix() + ChatColor.GOLD + "Your guild has been deleted.");
+			GuildMain.getInstance().getUser(uuid).removeGuild();
+		}
 	}
 
 	public static boolean exists(String name) {

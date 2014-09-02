@@ -14,6 +14,7 @@ public class Help {
 		sender.sendMessage(prefix + ChatColor.RED + "/guild disband");
 		sender.sendMessage(prefix + ChatColor.RED + "/guild rename");
 		sender.sendMessage(prefix + ChatColor.RED + "/guild bank");
+		sender.sendMessage(prefix + ChatColor.RED + "/guild prefix");
 		sender.sendMessage(prefix + ChatColor.RED + "/guild version");
 		sender.sendMessage(prefix + ChatColor.RED + "/guild help");
 	}

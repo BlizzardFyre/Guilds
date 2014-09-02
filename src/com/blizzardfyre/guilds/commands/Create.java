@@ -52,6 +52,7 @@ public class Create {
 
 		Guild.createGuild(name, user);
 		user.addGuild(name);
+		
 		GuildCreateEvent e = new GuildCreateEvent(GuildMain.getInstance().getGuild(name));
 		Bukkit.getPluginManager().callEvent(e);
 
